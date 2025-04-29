@@ -1,5 +1,4 @@
 # Logs
-logs
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -78,6 +77,11 @@ web_modules/
 .env.test.local
 .env.production.local
 .env.local
+
+# config toml
+config/development.local.toml
+config/production.local.toml
+config/test.local.toml
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
