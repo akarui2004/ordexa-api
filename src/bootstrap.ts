@@ -3,6 +3,7 @@ import Database from '@core/database';
 import errorHandler from '@middlewares/errorHandler';
 import apiRoutes from '@routes/api';
 import webRoutes from '@routes/web';
+import Logger from '@utils/Logger';
 import RouteExplorer from '@utils/RouteExplorer';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -38,9 +39,9 @@ class Bootstrap {
     await this.shutdownDatabase();
 
     this.app.listen(this.config.port, () => {
-      console.log(`Server running on port ${this.config.port} in ${ENVIRONMENT} mode`);
+      Logger.logInfo(`Server running on port ${this.config.port} in ${ENVIRONMENT} mode`);
     }).on("error", (error: Error) => {
-      console.error("Failed to start server:", error);
+      Logger.logError("Failed to start server", error);
       process.exit(1);
     });
   }
@@ -117,9 +118,9 @@ class Bootstrap {
     try {
       const db = Database.getInstance();
       await db.initialize();
-      console.log("Database connection established");
-    } catch (error) {
-      console.error("Failed to initialize database connection:", error);
+      Logger.logInfo("Database connection established");
+    } catch (error: any) {
+      Logger.logError("Failed to initialize database connection", error);
       process.exit(1);
     }
   }
@@ -131,9 +132,9 @@ class Bootstrap {
     try {
       const db = Database.getInstance();
       await db.destroy();
-      console.log("Database connection closed");
-    } catch (error) {
-      console.error("Failed to close database connection:", error);
+      Logger.logInfo("Database connection closed");
+    } catch (error: any) {
+      Logger.logError("Failed to close database connection", error);
     }
   }
 
@@ -142,19 +143,17 @@ class Bootstrap {
    */
   private async shutdownDatabase(): Promise<void> {
     process.on('SIGTERM', async () => {
-      console.log("SIGTERM signal received: closing database connection");
+      Logger.logInfo("SIGTERM signal received: closing database connection");
       await this.destroyDatabase();
       process.exit(0);
     });
 
     process.on('SIGINT', async () => {
-      console.log("SIGINT signal received: closing database connection");
+      Logger.logInfo("SIGINT signal received: closing database connection");
       await this.destroyDatabase();
       process.exit(0);
     });
   }
-
-
 }
 
 export default Bootstrap;

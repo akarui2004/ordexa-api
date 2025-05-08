@@ -5,7 +5,7 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 
 class Database {
   private static instance: Database;
-  private dataSource: DataSource;
+  private readonly dataSource: DataSource;
 
   private constructor() {
     const dbConfig: DataSourceOptions = {
