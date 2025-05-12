@@ -6,6 +6,7 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 class Database {
   private static instance: Database;
   private readonly dataSource: DataSource;
+  private readonly dbConfig: DataSourceOptions;
 
   private constructor() {
     const dbConfig: DataSourceOptions = {
@@ -30,7 +31,7 @@ class Database {
       },
 
       // Paths for TypeORM entities, migrations, and subscribers
-      entities: [path.join(__dirname, 'entity', '*.{ts,js}')],
+      entities: [path.join(__dirname, 'entities', '*.{ts,js}')],
       migrations: [path.join(__dirname, 'migrations', '*.{ts,js}')],
       subscribers: [path.join(__dirname, 'subscribers', '*.{ts,js}')],
     };
@@ -47,6 +48,10 @@ class Database {
 
   public getDataSource(): DataSource {
     return this.dataSource;
+  }
+
+  public getDbConfig(): DataSourceOptions {
+    return this.dbConfig;
   }
 
   public async initialize(): Promise<void> {

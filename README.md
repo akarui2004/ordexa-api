@@ -59,9 +59,9 @@ The application uses a hierarchical configuration system with environment-specif
 2. Update database connection details in your environment configuration
 3. Run database migrations:
    ```bash
-   npm run migrate
+   npm run db:migrate
    # or
-   yarn migrate
+   yarn db:migrate
    ```
 
 ## Running the Application
