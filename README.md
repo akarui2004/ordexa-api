@@ -55,6 +55,11 @@ The application uses a hierarchical configuration system with environment-specif
 
 ## Database Setup
 
+### DB Diagram
+#### Credentials Diagram
+![Credential](docs/dbDiargrams/Credentials.png)
+
+### DB Migration
 1. Ensure PostgreSQL is running
 2. Update database connection details in your environment configuration
 3. Run database migrations:

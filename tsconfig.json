@@ -32,7 +32,7 @@
     "skipLibCheck": true
   },
   "include": ["src", "server.ts", "config"],
-  "exclude": ["node_modules", "dist", "logs", "storages"],
+  "exclude": ["node_modules", "dist", "logs", "storages", "docs"],
   "ts-node": {
     "require": ["tsconfig-paths/register"]
   }
