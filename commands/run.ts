@@ -1,7 +1,7 @@
 import ConsoleFactory from './ConsoleFactory';
 
 (async() => {
-  await ConsoleFactory.createConsole();
+  await ConsoleFactory.execConsole();
 })().then(() => {
   process.exit(0);
 }).catch((err) => {
