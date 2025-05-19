@@ -7,15 +7,19 @@
    "license": "MIT",
    "scripts": {
       "typeorm": "typeorm-ts-node-commonjs",
-      "dev": "nodemon -r tsconfig-paths/register server.ts",
+      "dev": "nodemon",
       "clean": "rm -rf dist",
       "build": "yarn clean && tsc --project tsconfig.json && tscpaths -p tsconfig.json -s . -o ./dist",
       "start": "node -r tsconfig-paths/register dist/server.js",
       "db:migrate": "yarn typeorm migration:run -d config/data-source.ts",
-      "db:rollback": "yarn typeorm migration:revert -d config/data-source.ts"
+      "db:rollback": "yarn typeorm migration:revert -d config/data-source.ts",
+      "schema:drop": "yarn typeorm schema:drop -d config/data-source.ts",
+      "migration:create": "ts-node -r tsconfig-paths/register -P tsconfig.json ./commands/run.ts migration:create"
    },
    "dependencies": {
       "busboy": "^1.6.0",
+      "chalk": "^5.4.1",
+      "commander": "^13.1.0",
       "cors": "^2.8.5",
       "dotenv": "^16.5.0",
       "express": "^5.1.0",
