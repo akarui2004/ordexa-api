@@ -4,7 +4,7 @@
     "target": "ES2022",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "module": "commonjs",
+    "module": "CommonJS",
     "rootDir": "./",
     "moduleResolution": "node",
     "baseUrl": ".",
@@ -17,7 +17,7 @@
       "@utils/*": ["src/utils/*"],
       "@services/*": ["src/services/*"],
       "@const/*": ["src/constants/*"],
-      "@config/*": ["config/*"]
+      "@config/*": ["config/*"],
     },
     "resolveJsonModule": true,
     "outDir": "dist",
@@ -32,7 +32,7 @@
     "skipLibCheck": true
   },
   "include": ["src", "server.ts", "config"],
-  "exclude": ["node_modules", "dist", "logs", "storages", "docs"],
+  "exclude": ["node_modules", "dist", "logs", "storages", "docs", "commands"],
   "ts-node": {
     "require": ["tsconfig-paths/register"]
   }
