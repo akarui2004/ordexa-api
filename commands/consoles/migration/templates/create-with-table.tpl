@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner, Table, TableColumnOptions } from "typeorm";
 
-export class %(className)s implements MigrationInterface {
+export class %(className)s%(timestamp)s implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(this.table(), %(existed)t);
   }

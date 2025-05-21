@@ -24,6 +24,18 @@ abstract class BaseConsole {
     this.command.parse(process.argv.slice(1));
   }
 
+  protected printLog(message: string): void {
+    this.log(this.chalk.blue(message));
+  }
+
+  protected printSuccess(message: string): void {
+    this.log(this.chalk.green(message));
+  }
+
+  protected exitWithError(message: string): void {
+    this.command.error(this.chalk.red(`Error: ${message}`));
+  }
+
   protected abstract initCommand(): void;
   abstract main(): Promise<void>;
 }

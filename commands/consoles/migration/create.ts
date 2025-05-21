@@ -9,15 +9,16 @@ interface MigrationCreationProps {
   dir: string;
   table?: string | boolean;
 }
+
 class MigrationCreateConsole extends BaseConsole {
   private accessor migrationName: string = '';
   private accessor options: MigrationCreationProps;
 
-  constructor() {
+  public constructor() {
     super();
   }
 
-  initCommand(): void {
+  protected initCommand(): void {
     this.command
       .description('Create a new migration file')
       .argument('<name>', 'Name of the migration file')
@@ -33,6 +34,9 @@ class MigrationCreateConsole extends BaseConsole {
    * @throws {Error} - If the template file does not exist
    */
   private retrieveTemplateFile(): string {
+    if (!this.options.table && this.options.table !== false) {
+      this.exitWithError('Invalid table option. It should be either a string or false.');
+    }
     const migrationTemplateFile = this.options.table === false ? 'create-without-table.tpl' : 'create-with-table.tpl';
     return path.join(__dirname, 'templates', migrationTemplateFile);
   }
@@ -46,7 +50,7 @@ class MigrationCreateConsole extends BaseConsole {
    */
   private fetchTemplateContent(templateFilePath: string): string {
     if (!fs.existsSync(templateFilePath)) {
-      throw new Error(`Template file not found: ${templateFilePath}`);
+      this.exitWithError(`Template file not found: ${templateFilePath}`);
     }
     return fs.readFileSync(templateFilePath, 'utf-8');
   }
@@ -62,9 +66,10 @@ class MigrationCreateConsole extends BaseConsole {
     const migrationTemplateContent = this.fetchTemplateContent(templateFilePath);
 
     const templateParams = {
-      className: `${this.migrationName}${this.consoleTime}`,
+      className: this.migrationName,
       tableName: this.options.table,
       existed: true,
+      timestamp: this.consoleTime,
     }
 
     return sprintf(migrationTemplateContent, templateParams);
@@ -91,11 +96,14 @@ class MigrationCreateConsole extends BaseConsole {
    * @returns {string} - The migration file name
    */
   private getMigrationFileName(): string {
+    if (!/^[A-Z][a-zA-Z0-9]*$/.test(this.migrationName)) {
+      this.exitWithError('Migration name must start with an uppercase letter and contain only alphanumeric characters');
+    }
     return `${this.consoleTime}-${ExtString.toKebabCase(this.migrationName)}.ts`;
   }
 
   async main(): Promise<void> {
-    this.log(this.chalk.blue('Creating migration file...'));
+    this.printLog('Creating migration file...');
 
     this.options = this.command.opts();
     this.migrationName = this.command.args[0]!;
@@ -108,7 +116,7 @@ class MigrationCreateConsole extends BaseConsole {
     const migrationFilePath = path.join(migrationDir, migrationFile);
     fs.writeFileSync(migrationFilePath, migrationContent, 'utf-8');
 
-    this.log(this.chalk.green(`Migration file created: ${migrationFile}`));
+    this.printSuccess(`Migration file created: ${migrationFile}`);
   }
 }
 

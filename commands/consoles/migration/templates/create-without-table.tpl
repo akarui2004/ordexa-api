@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class %(className)s implements MigrationInterface {
+export class %(className)s%(timestamp)s implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     // add up query here
   }
