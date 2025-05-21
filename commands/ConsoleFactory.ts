@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import BaseConsole from './consoles/BaseConsole';
+import BaseConsole from '@console/BaseConsole';
 
 type ConsoleClass = new () => BaseConsole;
 
@@ -58,7 +58,7 @@ class ConsoleFactory {
     const _instance = new consoleCtor();
 
     if (typeof _instance.main !== 'function') throw new Error(`Console class does not have a main method: ${command}`);
-    _instance.setArguments(args.slice(1)); // Pass the rest of the arguments to the console instance
+    _instance.setArguments(this.getArgs().slice(1)); // Pass the rest of the arguments to the console instance
     await _instance.main();
   }
 }

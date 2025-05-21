@@ -18,6 +18,7 @@
       "@services/*": ["src/services/*"],
       "@const/*": ["src/constants/*"],
       "@config/*": ["config/*"],
+      "@console/*": ["commands/consoles/*"]
     },
     "resolveJsonModule": true,
     "outDir": "dist",
@@ -31,8 +32,8 @@
     "noUncheckedIndexedAccess": true,
     "skipLibCheck": true
   },
-  "include": ["src", "server.ts", "config"],
-  "exclude": ["node_modules", "dist", "logs", "storages", "docs", "commands"],
+  "include": ["src", "server.ts", "config", "commands"],
+  "exclude": ["node_modules", "dist", "logs", "storages", "docs"],
   "ts-node": {
     "require": ["tsconfig-paths/register"]
   }

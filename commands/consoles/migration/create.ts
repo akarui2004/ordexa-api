@@ -1,47 +1,114 @@
-import { spawn } from 'child_process';
-import BaseConsole from '../BaseConsole';
-import ExtString from '../../../src/utils/ExtString';
+import BaseConsole from '@console/BaseConsole';
+import ExtString from '@utils/ExtString';
+import fs from 'fs';
+import path from 'path';
+import { sprintf } from 'sprintf-js';
 
+interface MigrationCreationProps {
+  name: string;
+  dir: string;
+  table?: string | boolean;
+}
 class MigrationCreateConsole extends BaseConsole {
+  private accessor migrationName: string = '';
+  private accessor options: MigrationCreationProps;
+
   constructor() {
     super();
   }
 
-  async main(): Promise<void> {
-    this.log(this.chalk.blue('Migration create console is running...'));
+  initCommand(): void {
+    this.command
+      .description('Create a new migration file')
+      .argument('<name>', 'Name of the migration file')
+      .option('-t, --table <table>', 'Table name to create the migration for')
+      .option('--no-table', 'Do not create a table migration')
+      .option('-d, --dir <directory>', 'Directory to create the migration file in', 'src/migrations');
+  }
 
-    const migrationName = this.arguments[0];
-    if (!migrationName) throw new Error('Migration name is required.');
+  /**
+   * This method is used to retrieve the template file based on the options
+   *
+   * @returns {string} - The path to the template file
+   * @throws {Error} - If the template file does not exist
+   */
+  private retrieveTemplateFile(): string {
+    const migrationTemplateFile = this.options.table === false ? 'create-without-table.tpl' : 'create-with-table.tpl';
+    return path.join(__dirname, 'templates', migrationTemplateFile);
+  }
 
-    const migrationFilePath = `src/migrations/${ExtString.toKebabCase(migrationName)}`;
-
-    const cmd = 'npx';
-    const args = [
-      'typeorm',
-      'migration:create',
-      migrationFilePath,
-    ];
-
-    try {
-      await new Promise<void>((resolve, reject) => {
-        const child = spawn(cmd, args, { stdio: 'inherit', shell: true });
-
-        child.on('error', (error) => {
-          reject(error);
-        });
-
-        child.on('close', (code) => {
-          if (code === 0) {
-            this.log(this.chalk.green('Migration created successfully.'));
-            resolve();
-          } else {
-            reject(new Error(`Migration creation failed with code: ${code}`));
-          }
-        });
-      });
-    } catch (error: any) {
-      this.log(this.chalk.red('Error:', error?.message || error));
+  /**
+   * This method is used to fetch the content of the template file
+   *
+   * @param templateFilePath - The path to the template file
+   * @returns {string} - The content of the template file
+   * @throws {Error} - If the template file does not exist
+   */
+  private fetchTemplateContent(templateFilePath: string): string {
+    if (!fs.existsSync(templateFilePath)) {
+      throw new Error(`Template file not found: ${templateFilePath}`);
     }
+    return fs.readFileSync(templateFilePath, 'utf-8');
+  }
+
+  /**
+   * This method is used to generate the content of the migration file
+   *
+   * @returns {string} - The content of the migration file
+   * @throws {Error} - If the template file does not exist
+   */
+  private generateMigrationFileContent(): string {
+    const templateFilePath = this.retrieveTemplateFile();
+    const migrationTemplateContent = this.fetchTemplateContent(templateFilePath);
+
+    const templateParams = {
+      className: `${this.migrationName}${this.consoleTime}`,
+      tableName: this.options.table,
+      existed: true,
+    }
+
+    return sprintf(migrationTemplateContent, templateParams);
+  }
+
+  /**
+   * This method is used to get the migration directory
+   *
+   * @returns {string} - The migration directory path
+   * @throws {Error} - If the directory does not exist and cannot be created
+   */
+  private getMigrationDir(): string {
+    const migrationDir = this.options.dir;
+    if (!fs.existsSync(migrationDir)) {
+      fs.mkdirSync(migrationDir, { recursive: true });
+    }
+
+    return migrationDir;
+  }
+
+  /**
+   * This method is used to get the migration file name
+   *
+   * @returns {string} - The migration file name
+   */
+  private getMigrationFileName(): string {
+    return `${this.consoleTime}-${ExtString.toKebabCase(this.migrationName)}.ts`;
+  }
+
+  async main(): Promise<void> {
+    this.log(this.chalk.blue('Creating migration file...'));
+
+    this.options = this.command.opts();
+    this.migrationName = this.command.args[0]!;
+
+    const migrationContent = this.generateMigrationFileContent();
+
+    const migrationDir = this.getMigrationDir();
+    const migrationFile = this.getMigrationFileName();
+
+    const migrationFilePath = path.join(migrationDir, migrationFile);
+    fs.writeFileSync(migrationFilePath, migrationContent, 'utf-8');
+
+    this.log(this.chalk.green(`Migration file created: ${migrationFile}`));
   }
 }
 
