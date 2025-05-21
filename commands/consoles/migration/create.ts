@@ -35,7 +35,7 @@ class MigrationCreateConsole extends BaseConsole {
    */
   private retrieveTemplateFile(): string {
     if (!this.options.table && this.options.table !== false) {
-      this.exitWithError('Invalid table option. It should be either a string or false.');
+      this.options.table = false;
     }
     const migrationTemplateFile = this.options.table === false ? 'create-without-table.tpl' : 'create-with-table.tpl';
     return path.join(__dirname, 'templates', migrationTemplateFile);
