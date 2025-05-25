@@ -9,14 +9,14 @@ export class Principal {
   @ManyToOne(() => Organization, { nullable: false, onDelete: 'CASCADE' })
   organization: Organization
 
-  @Column('uuid', { name: 'organizationId', nullable: false })
+  @Column('uuid', { nullable: false })
   organizationId: string
 
-  @Column('uuid', { name: 'ownerId', nullable: false })
+  @Column('uuid', { nullable: false })
   ownerId: string
 
-  @Column('varchar', { name: 'ownerType', nullable: false })
-  ownerType: string
+  @Column('varchar', { nullable: false })
+  ownerType: 'user' | 'account'
 
   @Column('varchar', { nullable: true, default: 'active' })
   status: string
